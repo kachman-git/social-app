@@ -1,18 +1,29 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { formatDistanceToNow } from 'date-fns'
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
-import { Input } from '@/components/ui/input'
-import { createComment, deleteComment, editComment, editPost, deletePost } from '@/lib/api'
-import { MessageSquare, User, Edit, Trash2, X, Check } from 'lucide-react'
-import type { Post, Comment } from '@/types'
-import { Separator } from './ui/separator'
-import { useAuth } from '@/contexts/auth-context'
-import Link from 'next/link'
+import { useState } from "react";
+import { formatDistanceToNow } from "date-fns";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import {
+  createComment,
+  deleteComment,
+  editComment,
+  editPost,
+  deletePost,
+} from "@/lib/api";
+import { MessageSquare, User, Edit, Trash2, X, Check } from "lucide-react";
+import type { Post, Comment } from "@/types";
+import { Separator } from "./ui/separator";
+import { useAuth } from "@/contexts/auth-context";
+import Link from "next/link";
 import {
   Dialog,
   DialogContent,
@@ -20,48 +31,58 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { useToast } from "@/components/ui/use-toast"
-import { useRouter } from 'next/navigation'
+} from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
-export default function PostCard({ post: initialPost }: { post: Post }) {
-  const { user } = useAuth()
-  const router = useRouter()
-  const [post, setPost] = useState(initialPost)
-  const [comments, setComments] = useState(post.comments)
-  const [newComment, setNewComment] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isExpanded, setIsExpanded] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
-  const [editedTitle, setEditedTitle] = useState(post.title)
-  const [editedDescription, setEditedDescription] = useState(post.description)
-  const [isDeleting, setIsDeleting] = useState(false)
-  const { toast } = useToast()
+interface PostCardProps {
+  post: Post;
+  onPostDeleted?: (postId: number) => void;
+  onPostUpdated?: (post: Post) => void;
+}
 
-  const isPostOwner = user?.id === post.userId
+export default function PostCard({
+  post: initialPost,
+  onPostDeleted,
+  onPostUpdated,
+}: PostCardProps) {
+  const { user } = useAuth();
+  const router = useRouter();
+  const [post, setPost] = useState(initialPost);
+  const [comments, setComments] = useState(post.comments);
+  const [newComment, setNewComment] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(post.title);
+  const [editedDescription, setEditedDescription] = useState(post.description);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { toast } = useToast();
+
+  const isPostOwner = user?.id === post.userId;
 
   async function handleSubmitComment(e: React.FormEvent) {
-    e.preventDefault()
-    if (!newComment.trim()) return
+    e.preventDefault();
+    if (!newComment.trim()) return;
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     try {
       const comment = await createComment({
         text: newComment,
         postId: post.id,
-      })
-      setComments([...comments, comment])
-      setNewComment('')
+      });
+      setComments([...comments, comment]);
+      setNewComment("");
       toast({
         description: "Comment posted successfully.",
-      })
+      });
     } catch (error) {
       toast({
         variant: "destructive",
         description: "Failed to post comment.",
-      })
+      });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
   }
 
@@ -70,34 +91,35 @@ export default function PostCard({ post: initialPost }: { post: Post }) {
       const updatedPost = await editPost(post.id, {
         title: editedTitle,
         description: editedDescription,
-      })
-      setPost({ ...post, ...updatedPost })
-      setIsEditing(false)
+      });
+      setPost(updatedPost);
+      onPostUpdated?.(updatedPost);
+      setIsEditing(false);
       toast({
         description: "Post updated successfully.",
-      })
+      });
     } catch (error) {
       toast({
         variant: "destructive",
         description: "Failed to update post.",
-      })
+      });
     }
   }
 
   async function handleDeletePost() {
     try {
-      setIsDeleting(true)
-      await deletePost(post.id)
+      setIsDeleting(true);
+      await deletePost(post.id);
+      onPostDeleted?.(post.id);
       toast({
         description: "Post deleted successfully.",
-      })
-      router.refresh()
+      });
     } catch (error) {
       toast({
         variant: "destructive",
         description: "Failed to delete post.",
-      })
-      setIsDeleting(false)
+      });
+      setIsDeleting(false);
     }
   }
 
@@ -106,11 +128,15 @@ export default function PostCard({ post: initialPost }: { post: Post }) {
       <CardHeader className="flex flex-row items-center space-x-4">
         <Avatar>
           <AvatarFallback>
-            {post.user.username?.[0] || post.user.email?.[0]?.toUpperCase() || <User className="h-4 w-4" />}
+            {post.user.username?.[0] || post.user.email?.[0]?.toUpperCase() || (
+              <User className="h-4 w-4" />
+            )}
           </AvatarFallback>
         </Avatar>
         <div className="flex flex-1 flex-col">
-          <p className="text-sm font-semibold">{post.user.username ?? post.user.email}</p>
+          <p className="text-sm font-semibold">
+            {post.user.username ?? post.user.email}
+          </p>
           <p className="text-xs text-muted-foreground">
             {formatDistanceToNow(new Date(post.createdAt))} ago
           </p>
@@ -119,20 +145,16 @@ export default function PostCard({ post: initialPost }: { post: Post }) {
           <div className="flex items-center space-x-2">
             {isEditing ? (
               <>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleEditPost}
-                >
+                <Button variant="ghost" size="icon" onClick={handleEditPost}>
                   <Check className="h-4 w-4" />
                 </Button>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => {
-                    setIsEditing(false)
-                    setEditedTitle(post.title)
-                    setEditedDescription(post.description)
+                    setIsEditing(false);
+                    setEditedTitle(post.title);
+                    setEditedDescription(post.description);
                   }}
                 >
                   <X className="h-4 w-4" />
@@ -157,7 +179,8 @@ export default function PostCard({ post: initialPost }: { post: Post }) {
                     <DialogHeader>
                       <DialogTitle>Delete Post</DialogTitle>
                       <DialogDescription>
-                        Are you sure you want to delete this post? This action cannot be undone.
+                        Are you sure you want to delete this post? This action
+                        cannot be undone.
                       </DialogDescription>
                     </DialogHeader>
                     <div className="flex justify-end space-x-2">
@@ -166,7 +189,7 @@ export default function PostCard({ post: initialPost }: { post: Post }) {
                         onClick={handleDeletePost}
                         disabled={isDeleting}
                       >
-                        {isDeleting ? 'Deleting...' : 'Delete'}
+                        {isDeleting ? "Deleting..." : "Delete"}
                       </Button>
                     </div>
                   </DialogContent>
@@ -203,8 +226,8 @@ export default function PostCard({ post: initialPost }: { post: Post }) {
           )}
         </div>
         <div className="flex items-center space-x-1">
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             size="sm"
             onClick={() => setIsExpanded(!isExpanded)}
             className="text-muted-foreground"
@@ -223,14 +246,18 @@ export default function PostCard({ post: initialPost }: { post: Post }) {
                 key={comment.id}
                 comment={comment}
                 onDelete={async (commentId) => {
-                  await deleteComment(commentId)
-                  setComments(comments.filter(c => c.id !== commentId))
+                  await deleteComment(commentId);
+                  setComments(comments.filter((c) => c.id !== commentId));
                 }}
                 onEdit={async (commentId, text) => {
-                  const updatedComment = await editComment(commentId, text)
-                  setComments(comments.map(c => 
-                    c.id === commentId ? { ...c, text: updatedComment.text } : c
-                  ))
+                  const updatedComment = await editComment(commentId, text);
+                  setComments(
+                    comments.map((c) =>
+                      c.id === commentId
+                        ? { ...c, text: updatedComment.text }
+                        : c
+                    )
+                  );
                 }}
               />
             ))}
@@ -244,24 +271,24 @@ export default function PostCard({ post: initialPost }: { post: Post }) {
                 className="resize-none"
               />
               <Button type="submit" disabled={isSubmitting} size="sm">
-                {isSubmitting ? 'Posting...' : 'Post Comment'}
+                {isSubmitting ? "Posting..." : "Post Comment"}
               </Button>
             </form>
           ) : (
             <div className="text-center p-4 bg-muted rounded-lg">
               <p className="text-sm text-muted-foreground">
-                Please{' '}
+                Please{" "}
                 <Link href="/signin" className="text-primary hover:underline">
                   sign in
-                </Link>
-                {' '}to comment on this post
+                </Link>{" "}
+                to comment on this post
               </p>
             </div>
           )}
         </CardFooter>
       )}
     </Card>
-  )
+  );
 }
 
 interface CommentItemProps {
@@ -271,48 +298,51 @@ interface CommentItemProps {
 }
 
 function CommentItem({ comment, onDelete, onEdit }: CommentItemProps) {
-  const { user } = useAuth()
-  const [isEditing, setIsEditing] = useState(false)
-  const [editedText, setEditedText] = useState(comment.text)
-  const [isDeleting, setIsDeleting] = useState(false)
-  const { toast } = useToast()
+  const { user } = useAuth();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedText, setEditedText] = useState(comment.text);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { toast } = useToast();
 
   const handleEdit = async () => {
     try {
-      await onEdit(comment.id, editedText)
-      setIsEditing(false)
+      await onEdit(comment.id, editedText);
+      setIsEditing(false);
       toast({
         description: "Comment updated successfully.",
-      })
+      });
     } catch (error) {
       toast({
         variant: "destructive",
         description: "Failed to update comment.",
-      })
+      });
     }
-  }
+  };
 
   const handleDelete = async () => {
     try {
-      setIsDeleting(true)
-      await onDelete(comment.id)
+      setIsDeleting(true);
+      await onDelete(comment.id);
       toast({
         description: "Comment deleted successfully.",
-      })
+      });
     } catch (error) {
       toast({
         variant: "destructive",
         description: "Failed to delete comment.",
-      })
-      setIsDeleting(false)
+      });
+      setIsDeleting(false);
     }
-  }
+  };
 
   return (
     <div className="flex items-start space-x-2">
       <Avatar className="h-6 w-6">
         <AvatarFallback>
-          {comment.user.username?.[0] || comment.user.email?.[0]?.toUpperCase() || <User className="h-3 w-3" />}
+          {comment.user.username?.[0] ||
+            comment.user.email?.[0]?.toUpperCase() || (
+              <User className="h-3 w-3" />
+            )}
         </AvatarFallback>
       </Avatar>
       <div className="flex-1 space-y-1">
@@ -342,8 +372,8 @@ function CommentItem({ comment, onDelete, onEdit }: CommentItemProps) {
                     size="icon"
                     className="h-6 w-6"
                     onClick={() => {
-                      setIsEditing(false)
-                      setEditedText(comment.text)
+                      setIsEditing(false);
+                      setEditedText(comment.text);
                     }}
                   >
                     <X className="h-3 w-3" />
@@ -361,11 +391,7 @@ function CommentItem({ comment, onDelete, onEdit }: CommentItemProps) {
                   </Button>
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6"
-                      >
+                      <Button variant="ghost" size="icon" className="h-6 w-6">
                         <Trash2 className="h-3 w-3" />
                       </Button>
                     </DialogTrigger>
@@ -373,7 +399,8 @@ function CommentItem({ comment, onDelete, onEdit }: CommentItemProps) {
                       <DialogHeader>
                         <DialogTitle>Delete Comment</DialogTitle>
                         <DialogDescription>
-                          Are you sure you want to delete this comment? This action cannot be undone.
+                          Are you sure you want to delete this comment? This
+                          action cannot be undone.
                         </DialogDescription>
                       </DialogHeader>
                       <div className="flex justify-end space-x-2">
@@ -382,7 +409,7 @@ function CommentItem({ comment, onDelete, onEdit }: CommentItemProps) {
                           onClick={handleDelete}
                           disabled={isDeleting}
                         >
-                          {isDeleting ? 'Deleting...' : 'Delete'}
+                          {isDeleting ? "Deleting..." : "Delete"}
                         </Button>
                       </div>
                     </DialogContent>
@@ -403,6 +430,5 @@ function CommentItem({ comment, onDelete, onEdit }: CommentItemProps) {
         )}
       </div>
     </div>
-  )
+  );
 }
-

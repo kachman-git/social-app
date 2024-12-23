@@ -1,28 +1,29 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get('token')
-  const publicPaths = ['/', '/signin', '/signup']
-  const isPublicPath = publicPaths.includes(request.nextUrl.pathname)
-  const isAuthPath = ['/signin', '/signup'].includes(request.nextUrl.pathname)
+  const token = request.cookies.get("token");
+  const publicPaths = ["/", "/signin", "/signup"];
+  const isPublicPath = publicPaths.includes(request.nextUrl.pathname);
+  const isAuthPath = ["/signin", "/signup"].includes(request.nextUrl.pathname);
+  const isDashboardPath = request.nextUrl.pathname.startsWith("/dashboard");
 
   // Redirect authenticated users away from auth pages
   if (token && isAuthPath) {
-    return NextResponse.redirect(new URL('/', request.url))
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   // Allow public paths
   if (isPublicPath) {
-    return NextResponse.next()
+    return NextResponse.next();
   }
 
-  // Require authentication for all other paths
-  if (!token) {
-    return NextResponse.redirect(new URL('/signin', request.url))
+  // Require authentication for dashboard
+  if (isDashboardPath && !token) {
+    return NextResponse.redirect(new URL("/signin", request.url));
   }
 
-  return NextResponse.next()
+  return NextResponse.next();
 }
 
 export const config = {
@@ -34,7 +35,6 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
   ],
-}
-
+};

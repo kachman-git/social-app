@@ -89,7 +89,7 @@ export default function SignUpPage() {
         values.password
       );
       login(access_token, user);
-      router.push("/");
+      router.push("/dashboard");
       toast({
         description: "Successfully signed up.",
       });

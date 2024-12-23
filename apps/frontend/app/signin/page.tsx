@@ -58,7 +58,7 @@ export default function SignInPage() {
         values.password
       );
       login(access_token, user);
-      router.push("/");
+      router.push("/dashboard");
       toast({
         description: "Successfully signed in.",
       });

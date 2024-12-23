@@ -1,21 +1,26 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { createPost } from '@/lib/api'
-import { PenLine } from 'lucide-react'
-import { useAuth } from '@/contexts/auth-context'
-import Link from 'next/link'
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { createPost } from "@/lib/api";
+import { PenLine } from "lucide-react";
+import { useAuth } from "@/contexts/auth-context";
+import Link from "next/link";
+import { Post } from "@/types";
+import { useToast } from "@/hooks/use-toast";
 
-export default function CreatePostForm() {
-  const { user } = useAuth()
-  const router = useRouter()
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isExpanded, setIsExpanded] = useState(false)
+interface CreatePostFormProps {
+  onPostCreated?: (post: Post) => void;
+}
+
+export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
+  const { user } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const { toast } = useToast();
 
   if (!user) {
     return (
@@ -23,36 +28,43 @@ export default function CreatePostForm() {
         <CardContent className="pt-6">
           <div className="text-center">
             <p className="text-sm text-muted-foreground">
-              Please{' '}
-              <Link href="/signin" className="underline">
+              Please{" "}
+              <Link href="/signin" className="text-primary hover:underline">
                 sign in
-              </Link>
-              {' '}to create a post
+              </Link>{" "}
+              to create a post
             </p>
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const formData = new FormData(e.currentTarget)
-    const title = formData.get('title') as string
-    const description = formData.get('description') as string
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const title = formData.get("title") as string;
+    const description = formData.get("description") as string;
 
-    if (!title || !description) return
+    if (!title || !description) return;
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     try {
-      await createPost({ title, description })
-      router.refresh()
-      e.currentTarget.reset()
-      setIsExpanded(false)
+      const newPost = await createPost({ title, description });
+      onPostCreated?.(newPost);
+      e.currentTarget.reset();
+      setIsExpanded(false);
+      toast({
+        description: "Post created successfully!",
+      });
     } catch (error) {
-      console.error('Failed to create post:', error)
+      console.error("Failed to create post:", error);
+      toast({
+        variant: "destructive",
+        description: "Failed to create post. Please try again.",
+      });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
   }
 
@@ -70,7 +82,7 @@ export default function CreatePostForm() {
           </Button>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -98,7 +110,7 @@ export default function CreatePostForm() {
           </div>
           <div className="flex space-x-2">
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Creating...' : 'Create Post'}
+              {isSubmitting ? "Creating..." : "Create Post"}
             </Button>
             <Button
               type="button"
@@ -111,6 +123,5 @@ export default function CreatePostForm() {
         </form>
       </CardContent>
     </Card>
-  )
+  );
 }
-
