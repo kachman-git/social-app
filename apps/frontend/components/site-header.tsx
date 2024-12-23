@@ -1,12 +1,14 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { ModeToggle } from "./mode-toggle"
-import { UserNav } from "./user-nav"
-import { PenSquare } from 'lucide-react'
-import { useAuth } from "@/contexts/auth-context"
+"use client";
+
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ModeToggle } from "./mode-toggle";
+import { UserNav } from "./user-nav";
+import { PenSquare } from "lucide-react";
+import { useAuth } from "@/contexts/auth-context";
 
 export function SiteHeader() {
-  const { user } = useAuth()
+  const { user } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -35,6 +37,5 @@ export function SiteHeader() {
         </div>
       </div>
     </header>
-  )
+  );
 }
-
