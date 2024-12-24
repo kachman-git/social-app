@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { User } from '@/types'
 import axios from '@/lib/axios'
+import { useToast } from '@/hooks/use-toast'
 
 interface AuthContextType {
   user: User | null;
@@ -11,30 +12,39 @@ interface AuthContextType {
   logout: () => void;
   updateUser: (user: User) => void;
   isLoading: boolean;
+  isInitializing: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+interface AuthProviderProps {
+  children: React.ReactNode;
+}
+
+export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isInitializing, setIsInitializing] = useState(true)
   const router = useRouter()
+  const { toast } = useToast()
 
   useEffect(() => {
     const initializeAuth = async () => {
       const token = localStorage.getItem('token')
       if (token) {
         try {
-          // Set the token in axios defaults
           axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-          // Fetch current user
+          document.cookie = `token=${token}; path=/; max-age=604800; SameSite=Lax`
           const response = await axios.get('/users/me')
           setUser(response.data)
         } catch (error) {
+          console.error('Auth initialization error:', error)
           localStorage.removeItem('token')
+          document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT'
           delete axios.defaults.headers.common['Authorization']
         }
       }
+      setIsInitializing(false)
       setIsLoading(false)
     }
 
@@ -42,13 +52,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const login = (token: string, user: User) => {
-    localStorage.setItem('token', token)
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-    setUser(user)
+    try {
+      localStorage.setItem('token', token)
+      document.cookie = `token=${token}; path=/; max-age=604800; SameSite=Lax`
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+      setUser(user)
+      router.push('/dashboard')
+    } catch (error) {
+      console.error('Login error:', error)
+      toast({
+        variant: "destructive",
+        description: "Failed to complete login. Please try again.",
+      })
+    }
   }
 
   const logout = () => {
     localStorage.removeItem('token')
+    document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT'
     delete axios.defaults.headers.common['Authorization']
     setUser(null)
     router.push('/signin')
@@ -59,7 +80,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, updateUser, isLoading }}>
+    <AuthContext.Provider 
+      value={{ 
+        user, 
+        login, 
+        logout, 
+        updateUser, 
+        isLoading, 
+        isInitializing 
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )

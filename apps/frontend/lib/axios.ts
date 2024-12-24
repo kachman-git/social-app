@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { useAuth } from '@/contexts/auth-context'
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -32,8 +31,11 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
 
-      // Clear token and redirect to login
+      // Clear token and cookies
       localStorage.removeItem('token')
+      document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT'
+      
+      // Redirect to login
       window.location.href = '/signin'
       return Promise.reject(error)
     }

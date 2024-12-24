@@ -35,7 +35,6 @@ export class CommentService {
 
       return comment;
     } catch (error) {
-      // Handle specific Prisma errors if needed
       throw new ForbiddenException('Failed to create comment');
     }
   }

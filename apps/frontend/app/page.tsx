@@ -75,7 +75,7 @@ export default function WelcomePage() {
               </CardContent>
             </Card>
             <Card className="transform transition-all duration-200 hover:scale-105">
-              <CardContent className="p-6">
+              <CardContent className="p-6 mb-2">
                 <FeatureCard
                   icon={UserPlus}
                   title="Grow Your Network"
@@ -159,16 +159,16 @@ function FeatureCard({
 }) {
   return (
     <div className="relative overflow-hidden rounded-lg">
-      <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br  text-white">
+      <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br text-white">
         <div
           className={cn(
             "absolute inset-0 bg-gradient-to-br opacity-80",
             gradient
           )}
         />
-        <Icon className="relative h-6 w-6" />
+        <Icon className="relative h-6 w-6 ml-4" />
       </div>
-      <div className="mt-4 space-y-2 p-2">
+      <div className="mt-4 space-y-2 p-4">
         <h3 className="font-bold">{title}</h3>
         <p className="text-muted-foreground">{description}</p>
       </div>
@@ -191,7 +191,7 @@ function SecurityFeature({
         <div className="rounded-full bg-primary/10 p-2">
           <Icon className="h-5 w-5 text-primary" />
         </div>
-        <div className="p-2">
+        <div>
           <h3 className="font-semibold">{title}</h3>
           <p className="text-sm text-muted-foreground">{description}</p>
         </div>

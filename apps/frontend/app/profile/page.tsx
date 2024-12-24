@@ -1,17 +1,17 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from 'react'
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/components/ui/card"
 import {
   Form,
   FormControl,
@@ -20,99 +20,92 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
-import { createProfile, editProfile, getProfiles } from "@/lib/api";
-import { useAuth } from "@/contexts/auth-context";
-import { Loader2 } from "lucide-react";
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { useToast } from "@/hooks/use-toast"
+import { createProfile, editProfile, getProfiles } from '@/lib/api'
+import { useAuth } from '@/contexts/auth-context'
+import { Loader2 } from 'lucide-react'
 
 const profileFormSchema = z.object({
-  bio: z
-    .string()
-    .min(1, "Bio is required")
-    .max(500, "Bio must not exceed 500 characters"),
-  hobbies: z
-    .string()
-    .transform((str) =>
-      str
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean)
-    )
-    .refine((arr) => arr.length > 0, {
-      message: "At least one hobby is required",
-    }),
-});
+  bio: z.string().min(1, "Bio is required").max(500, "Bio must not exceed 500 characters"),
+  hobbies: z.string().transform((str) => 
+    str.split(',')
+      .map(s => s.trim())
+      .filter(Boolean)
+  ).refine((arr) => arr.length > 0, {
+    message: "At least one hobby is required"
+  })
+})
 
-type ProfileFormValues = z.infer<typeof profileFormSchema>;
+type ProfileFormValues = z.infer<typeof profileFormSchema>
 
 export default function ProfilePage() {
-  const { user } = useAuth();
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
-  const { toast } = useToast();
-  const [profile, setProfile] = useState<any>(null);
+  const { user } = useAuth()
+  const [isLoading, setIsLoading] = useState(true)
+  const [isSaving, setIsSaving] = useState(false)
+  const { toast } = useToast()
+  const [profile, setProfile] = useState<any>(null)
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
       bio: "",
-      hobbies: [],
+      hobbies: "",
     },
-  });
+  })
 
   useEffect(() => {
     async function loadProfile() {
       try {
-        const profiles = await getProfiles();
+        const profiles = await getProfiles()
         if (profiles && profiles.length > 0) {
-          const userProfile = profiles[0]; // Assuming one profile per user
-          setProfile(userProfile);
+          const userProfile = profiles[0] // Assuming one profile per user
+          setProfile(userProfile)
           form.reset({
             bio: userProfile.bio,
-            hobbies: userProfile.hobbies.join(", "),
-          });
+            hobbies: userProfile.hobbies.join(', '),
+          })
         }
       } catch (error) {
         toast({
           variant: "destructive",
           description: "Failed to load profile.",
-        });
+        })
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
     }
 
-    loadProfile();
-  }, [form, toast]);
+    loadProfile()
+  }, [form, toast])
 
   async function onSubmit(data: ProfileFormValues) {
-    setIsSaving(true);
+    setIsSaving(true)
     try {
       if (profile) {
         await editProfile(profile.id, {
           bio: data.bio,
           hobbies: data.hobbies,
-        });
+        })
       } else {
         const newProfile = await createProfile({
           bio: data.bio,
           hobbies: data.hobbies,
-        });
-        setProfile(newProfile);
+        })
+        setProfile(newProfile)
       }
       toast({
-        description: `Profile ${profile ? "updated" : "created"} successfully.`,
-      });
+        description: `Profile ${profile ? 'updated' : 'created'} successfully.`,
+      })
     } catch (error) {
       toast({
         variant: "destructive",
-        description: `Failed to ${profile ? "update" : "create"} profile.`,
-      });
+        description: `Failed to ${profile ? 'update' : 'create'} profile.`,
+      })
     } finally {
-      setIsSaving(false);
+      setIsSaving(false)
     }
   }
 
@@ -127,7 +120,7 @@ export default function ProfilePage() {
           </CardContent>
         </Card>
       </div>
-    );
+    )
   }
 
   return (
@@ -135,7 +128,9 @@ export default function ProfilePage() {
       <Card>
         <CardHeader>
           <CardTitle>Profile</CardTitle>
-          <CardDescription>Update your profile information</CardDescription>
+          <CardDescription>
+            Update your profile information
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -154,8 +149,7 @@ export default function ProfilePage() {
                       />
                     </FormControl>
                     <FormDescription>
-                      Write a short bio about yourself. This will be displayed
-                      on your profile.
+                      Write a short bio about yourself. This will be displayed on your profile.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -187,7 +181,7 @@ export default function ProfilePage() {
                     Saving...
                   </>
                 ) : (
-                  "Save Changes"
+                  'Save Changes'
                 )}
               </Button>
             </form>
@@ -195,5 +189,6 @@ export default function ProfilePage() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }
+

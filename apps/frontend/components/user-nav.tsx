@@ -1,6 +1,5 @@
-"use client";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,15 +8,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import Link from "next/link";
-import { User, Settings } from "lucide-react";
-import { useAuth } from "@/contexts/auth-context";
-import { useRouter } from "next/navigation";
+} from "@/components/ui/dropdown-menu"
+import Link from "next/link"
+import { User, Settings } from 'lucide-react'
+import { useAuth } from "@/contexts/auth-context"
+import { useRouter } from "next/navigation"
 
 export function UserNav() {
-  const { user, logout } = useAuth();
-  const router = useRouter();
+  const { user, logout } = useAuth()
+  const router = useRouter()
 
   if (!user) {
     return (
@@ -29,13 +28,13 @@ export function UserNav() {
           <Link href="/signup">Sign Up</Link>
         </Button>
       </div>
-    );
+    )
   }
 
   const handleLogout = () => {
-    logout();
-    router.push("/signin");
-  };
+    logout()
+    router.push('/signin')
+  }
 
   return (
     <DropdownMenu>
@@ -51,9 +50,7 @@ export function UserNav() {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">
-              {user.username || "User"}
-            </p>
+            <p className="text-sm font-medium leading-none">{user.username || 'User'}</p>
             <p className="text-xs leading-none text-muted-foreground">
               {user.email}
             </p>
@@ -75,8 +72,11 @@ export function UserNav() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleLogout}>
+          Log out
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  );
+  )
 }
+
