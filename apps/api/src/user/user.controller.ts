@@ -1,9 +1,17 @@
 import { Body, Controller, Get, Patch, UseGuards, Param } from '@nestjs/common';
-import { User } from '@prisma/client';
 import { JwtGuard } from '../auth/guard';
 import { GetUser } from '../auth/decorator';
 import { EditUserDto } from './dto';
 import { UserService } from './user.service';
+
+interface User {
+  id: number;
+  username: string | null;
+  email: string;
+  hash: string;
+  createdAt: Date;
+  updateAt: Date;
+}
 
 @UseGuards(JwtGuard)
 @Controller('users')
