@@ -36,9 +36,6 @@ const settingsSchema = z.object({
 
 type SettingsFormData = z.infer<typeof settingsSchema>;
 
-let userDataId: number;
-let profileDataId: number;
-
 export default function Settings() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
@@ -110,7 +107,6 @@ export default function Settings() {
           description: "Failed to load user data",
         });
       } finally {
-        console.log({ userDataId, profileDataId });
         setIsLoading(false);
       }
     };
@@ -121,7 +117,7 @@ export default function Settings() {
     const token = localStorage.getItem("token");
     try {
       const [userResponse, profileResponse] = await Promise.all([
-        fetch(`http://localhost:3333/users/${userDataId}`, {
+        fetch(`http://localhost:3333/users`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
