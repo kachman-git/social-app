@@ -86,8 +86,6 @@ export default function Settings() {
         if (userResponse.ok && profileResponse.ok) {
           const userData = await userResponse.json();
           const profileData = await profileResponse.json();
-          userDataId = userData.id;
-          profileDataId = profileData.id;
           reset({
             ...userData,
             ...profileData[0],
