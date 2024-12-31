@@ -73,10 +73,10 @@ export default function Settings() {
       }
       try {
         const [userResponse, profileResponse] = await Promise.all([
-          fetch("https://social-app-1l9h.onrender.com/users/me", {
+          fetch("http://localhost:3333/users/me", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch("https://social-app-1l9h.onrender.com/profile", {
+          fetch("http://localhost:3333/profile", {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -124,7 +124,7 @@ export default function Settings() {
 
     try {
       const [userResponse, profileResponse] = await Promise.all([
-        fetch(`https://social-app-1l9h.onrender.com/users/me`, {
+        fetch(`http://localhost:3333/users/me`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -135,7 +135,7 @@ export default function Settings() {
             ...(data.username && { username: data.username }),
           }),
         }),
-        fetch(`https://social-app-1l9h.onrender.com/profile`, {
+        fetch(`http://localhost:3333/profile`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",

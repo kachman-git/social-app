@@ -27,7 +27,7 @@ export default function EditCommentForm({
     const token = localStorage.getItem("token");
     try {
       const response = await fetch(
-        `https://social-app-1l9h.onrender.com/comment/${comment.id}`,
+        `http://localhost:3333/comment/${comment.id}`,
         {
           method: "PATCH",
           headers: {

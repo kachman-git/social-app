@@ -17,17 +17,14 @@ export default function CreatePostForm() {
     setIsSubmitting(true);
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(
-        "https://social-app-1l9h.onrender.com/post",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ title, description }),
-        }
-      );
+      const response = await fetch("http://localhost:3333/post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ title, description }),
+      });
       if (response.ok) {
         setTitle("");
         setDescription("");

@@ -58,16 +58,16 @@ export default function UserProfile() {
       try {
         const [userResponse, profileResponse, postsResponse, commentsResponse] =
           await Promise.all([
-            fetch(`https://social-app-1l9h.onrender.com/users/me`, {
+            fetch(`http://localhost:3333/users/me`, {
               headers: { Authorization: `Bearer ${token}` },
             }),
-            fetch(`https://social-app-1l9h.onrender.com/profile`, {
+            fetch(`http://localhost:3333/profile`, {
               headers: { Authorization: `Bearer ${token}` },
             }),
-            fetch(`https://social-app-1l9h.onrender.com/post/me`, {
+            fetch(`http://localhost:3333/post/me`, {
               headers: { Authorization: `Bearer ${token}` },
             }),
-            fetch(`https://social-app-1l9h.onrender.com/comment`, {
+            fetch(`http://localhost:3333/comment`, {
               headers: { Authorization: `Bearer ${token}` },
             }),
           ]);
