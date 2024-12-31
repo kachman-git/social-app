@@ -25,11 +25,14 @@ export default function Dashboard() {
         return;
       }
       try {
-        const response = await fetch("http://localhost:3333/users/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          "https://social-app-1l9h.onrender.com/users/me",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         if (response.ok) {
           const userData = await response.json();
           setUser(userData);
