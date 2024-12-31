@@ -29,7 +29,7 @@ const settingsSchema = z.object({
     .optional(),
   bio: z.string().max(500, "Bio must be 500 characters or less").optional(),
   hobbies: z
-    .array(z.object({ value: z.string() }))
+    .array(z.object({ value: z.string().trim().min(1, "Hobby cannot be empty") }))
     .max(20, "You can add up to 20 hobbies")
     .optional(),
 });
@@ -57,7 +57,7 @@ export default function Settings() {
     },
   });
 
-  const { fields, append, remove } = useFieldArray<SettingsFormData>({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: "hobbies",
   });
@@ -72,38 +72,34 @@ export default function Settings() {
       try {
         const [userResponse, profileResponse] = await Promise.all([
           fetch("http://localhost:3333/users/me", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }),
           fetch("http://localhost:3333/profile", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
 
-        if (userResponse.ok && profileResponse.ok) {
-          const userData = await userResponse.json();
-          const profileData = await profileResponse.json();
-          reset({
-            ...userData,
-            ...profileData[0],
-            hobbies:
-              profileData[0]?.hobbies?.map((hobby: string) => ({
-                value: hobby,
-              })) || [],
-          });
-        } else {
-          localStorage.removeItem("token");
-          router.push("/signin");
+        if (!userResponse.ok || !profileResponse.ok) {
+          throw new Error("Failed to fetch user data");
         }
+
+        const [userData, profileData] = await Promise.all([
+          userResponse.json(),
+          profileResponse.json(),
+        ]);
+
+        reset({
+          ...userData,
+          ...profileData,
+          hobbies: profileData.hobbies?.map((hobby: string) => ({ value: hobby })) || [],
+        });
       } catch (error) {
         console.error("Error fetching user data:", error);
         toast({
           title: "Error",
-          description: "Failed to load user data",
+          description: "Failed to load user data. Please try again.",
         });
+        router.push("/signin");
       } finally {
         setIsLoading(false);
       }
@@ -113,9 +109,18 @@ export default function Settings() {
 
   const onSubmit = async (data: SettingsFormData) => {
     const token = localStorage.getItem("token");
+    if (!token) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to update your settings.",
+      });
+      router.push("/signin");
+      return;
+    }
+
     try {
       const [userResponse, profileResponse] = await Promise.all([
-        fetch(`http://localhost:3333/users`, {
+        fetch(`http://localhost:3333/users/me`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -141,24 +146,22 @@ export default function Settings() {
         }),
       ]);
 
-      if (userResponse.ok && profileResponse.ok) {
-        toast({
-          title: "Success",
-          description: "User information updated successfully",
-        });
-        router.push("/dashboard");
-      } else {
-        const errorData = await userResponse.json();
-        toast({
-          title: "Error",
-          description: errorData.message || "Failed to update user information",
-        });
+      if (!userResponse.ok || !profileResponse.ok) {
+        const errorData = await userResponse.json().catch(() => ({}));
+        const profileErrorData = await profileResponse.json().catch(() => ({}));
+        throw new Error(errorData.message || profileErrorData.message || "Failed to update user information");
       }
+
+      toast({
+        title: "Success",
+        description: "User information updated successfully",
+      });
+      router.push("/dashboard");
     } catch (error) {
       console.error("Error updating user:", error);
       toast({
         title: "Error",
-        description: "An error occurred. Please try again.",
+        description: error instanceof Error ? error.message : "An error occurred. Please try again.",
       });
     }
   };
@@ -292,3 +295,4 @@ export default function Settings() {
     </Card>
   );
 }
+
