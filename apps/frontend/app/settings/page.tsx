@@ -29,7 +29,9 @@ const settingsSchema = z.object({
     .optional(),
   bio: z.string().max(500, "Bio must be 500 characters or less").optional(),
   hobbies: z
-    .array(z.object({ value: z.string().trim().min(1, "Hobby cannot be empty") }))
+    .array(
+      z.object({ value: z.string().trim().min(1, "Hobby cannot be empty") })
+    )
     .max(20, "You can add up to 20 hobbies")
     .optional(),
 });
@@ -91,7 +93,9 @@ export default function Settings() {
         reset({
           ...userData,
           ...profileData,
-          hobbies: profileData.hobbies?.map((hobby: string) => ({ value: hobby })) || [],
+          hobbies:
+            profileData.hobbies?.map((hobby: string) => ({ value: hobby })) ||
+            [],
         });
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -149,7 +153,11 @@ export default function Settings() {
       if (!userResponse.ok || !profileResponse.ok) {
         const errorData = await userResponse.json().catch(() => ({}));
         const profileErrorData = await profileResponse.json().catch(() => ({}));
-        throw new Error(errorData.message || profileErrorData.message || "Failed to update user information");
+        throw new Error(
+          errorData.message ||
+            profileErrorData.message ||
+            "Failed to update user information"
+        );
       }
 
       toast({
@@ -161,7 +169,10 @@ export default function Settings() {
       console.error("Error updating user:", error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "An error occurred. Please try again.",
+        description:
+          error instanceof Error
+            ? error.message
+            : "An error occurred. Please try again.",
       });
     }
   };
@@ -295,4 +306,3 @@ export default function Settings() {
     </Card>
   );
 }
-
