@@ -29,14 +29,17 @@ export default function EditPostForm({
     setIsSubmitting(true);
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`http://localhost:3333/post/${post.id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ title, description }),
-      });
+      const response = await fetch(
+        `http://social-app-production-c882.up.railway.app/post/${post.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ title, description }),
+        }
+      );
       if (response.ok) {
         const updatedPost = await response.json();
         onPostUpdated(updatedPost);

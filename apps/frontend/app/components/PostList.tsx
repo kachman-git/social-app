@@ -35,11 +35,14 @@ export default function PostList() {
     const fetchPosts = async () => {
       const token = localStorage.getItem("token");
       try {
-        const response = await fetch("http://localhost:3333/post", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          "http://social-app-production-c882.up.railway.app/post",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         if (response.ok) {
           const data = await response.json();
           setPosts(data);

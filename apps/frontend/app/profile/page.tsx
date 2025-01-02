@@ -58,16 +58,16 @@ export default function UserProfile() {
       try {
         const [userResponse, profileResponse, postsResponse, commentsResponse] =
           await Promise.all([
-            fetch(`http://localhost:3333/users/me`, {
+            fetch(`http://social-app-production-c882.up.railway.app/users/me`, {
               headers: { Authorization: `Bearer ${token}` },
             }),
-            fetch(`http://localhost:3333/profile`, {
+            fetch(`http://social-app-production-c882.up.railway.app/profile`, {
               headers: { Authorization: `Bearer ${token}` },
             }),
-            fetch(`http://localhost:3333/post/me`, {
+            fetch(`http://social-app-production-c882.up.railway.app/post/me`, {
               headers: { Authorization: `Bearer ${token}` },
             }),
-            fetch(`http://localhost:3333/comment`, {
+            fetch(`http://social-app-production-c882.up.railway.app/comment`, {
               headers: { Authorization: `Bearer ${token}` },
             }),
           ]);

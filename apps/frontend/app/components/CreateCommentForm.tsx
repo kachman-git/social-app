@@ -23,14 +23,17 @@ export default function CreateCommentForm({
     setIsSubmitting(true);
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch("http://localhost:3333/comment", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ text, postId }),
-      });
+      const response = await fetch(
+        "http://social-app-production-c882.up.railway.app/comment",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ text, postId }),
+        }
+      );
       if (response.ok) {
         const newComment = await response.json();
         setText("");

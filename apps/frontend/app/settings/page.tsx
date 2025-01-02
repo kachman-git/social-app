@@ -73,10 +73,10 @@ export default function Settings() {
       }
       try {
         const [userResponse, profileResponse] = await Promise.all([
-          fetch("http://localhost:3333/users/me", {
+          fetch("http://social-app-production-c882.up.railway.app/users/me", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch("http://localhost:3333/profile", {
+          fetch("http://social-app-production-c882.up.railway.app/profile", {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -124,7 +124,7 @@ export default function Settings() {
 
     try {
       const [userResponse, profileResponse] = await Promise.all([
-        fetch(`http://localhost:3333/users/me`, {
+        fetch(`http://social-app-production-c882.up.railway.app/users/me`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -135,7 +135,7 @@ export default function Settings() {
             ...(data.username && { username: data.username }),
           }),
         }),
-        fetch(`http://localhost:3333/profile`, {
+        fetch(`http://social-app-production-c882.up.railway.app/profile`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",

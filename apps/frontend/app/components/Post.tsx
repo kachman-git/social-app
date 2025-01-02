@@ -51,12 +51,15 @@ export default function Post({
   const handleDelete = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`http://localhost:3333/post/${post.id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `http://social-app-production-c882.up.railway.app/post/${post.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       if (response.ok) {
         onPostDeleted(post.id);
         toast({

@@ -17,14 +17,17 @@ export default function CreatePostForm() {
     setIsSubmitting(true);
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch("http://localhost:3333/post", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ title, description }),
-      });
+      const response = await fetch(
+        "http://social-app-production-c882.up.railway.app/post",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ title, description }),
+        }
+      );
       if (response.ok) {
         setTitle("");
         setDescription("");
