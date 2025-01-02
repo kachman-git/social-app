@@ -73,10 +73,10 @@ export default function Settings() {
       }
       try {
         const [userResponse, profileResponse] = await Promise.all([
-          fetch("http://social-app-production-c882.up.railway.app/users/me", {
+          fetch("https://social-app-production-c882.up.railway.app/users/me", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch("http://social-app-production-c882.up.railway.app/profile", {
+          fetch("https://social-app-production-c882.up.railway.app/profile", {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -124,7 +124,7 @@ export default function Settings() {
 
     try {
       const [userResponse, profileResponse] = await Promise.all([
-        fetch(`http://social-app-production-c882.up.railway.app/users/me`, {
+        fetch(`https://social-app-production-c882.up.railway.app/users/me`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -135,7 +135,7 @@ export default function Settings() {
             ...(data.username && { username: data.username }),
           }),
         }),
-        fetch(`http://social-app-production-c882.up.railway.app/profile`, {
+        fetch(`https://social-app-production-c882.up.railway.app/profile`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",

@@ -43,7 +43,7 @@ export default function SignIn() {
   const onSubmit = async (data: SignInFormData) => {
     try {
       const response = await fetch(
-        "http://social-app-production-c882.up.railway.app/auth/signin",
+        "https://social-app-production-c882.up.railway.app/auth/signin",
         {
           method: "POST",
           headers: {

@@ -30,7 +30,7 @@ export default function EditPostForm({
     const token = localStorage.getItem("token");
     try {
       const response = await fetch(
-        `http://social-app-production-c882.up.railway.app/post/${post.id}`,
+        `https://social-app-production-c882.up.railway.app/post/${post.id}`,
         {
           method: "PATCH",
           headers: {

@@ -18,7 +18,7 @@ export default function CreatePostForm() {
     const token = localStorage.getItem("token");
     try {
       const response = await fetch(
-        "http://social-app-production-c882.up.railway.app/post",
+        "https://social-app-production-c882.up.railway.app/post",
         {
           method: "POST",
           headers: {

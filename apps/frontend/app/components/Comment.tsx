@@ -40,7 +40,7 @@ export default function Comment({
     const token = localStorage.getItem("token");
     try {
       const response = await fetch(
-        `http://social-app-production-c882.up.railway.app/comment/${comment.id}`,
+        `https://social-app-production-c882.up.railway.app/comment/${comment.id}`,
         {
           method: "DELETE",
           headers: {

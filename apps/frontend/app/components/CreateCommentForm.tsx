@@ -24,7 +24,7 @@ export default function CreateCommentForm({
     const token = localStorage.getItem("token");
     try {
       const response = await fetch(
-        "http://social-app-production-c882.up.railway.app/comment",
+        "https://social-app-production-c882.up.railway.app/comment",
         {
           method: "POST",
           headers: {

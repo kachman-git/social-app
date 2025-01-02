@@ -26,7 +26,7 @@ export default function Dashboard() {
       }
       try {
         const response = await fetch(
-          "http://social-app-production-c882.up.railway.app/users/me",
+          "https://social-app-production-c882.up.railway.app/users/me",
           {
             headers: {
               Authorization: `Bearer ${token}`,
