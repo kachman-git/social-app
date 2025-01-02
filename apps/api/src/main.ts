@@ -6,7 +6,7 @@ import { CustomHttpExceptionFilter } from './filters/custom-http-exception.filte
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: 'https://social-app-production-c882.up.railway.app',
+    origin: 'https://social-app-blond.vercel.app',
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: 'Content-Type, Authorization',
     credentials: true,
